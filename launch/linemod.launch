@@ -1,0 +1,8 @@
+<launch>
+  <node name="linemod1" pkg="object_recognition_core" type="detection" args="-c  /home/arc/ros_ws/src/linemod/conf/detection.ros.ork" />
+  	<!-- <remap from="recognized_object_array" to="recognized_object_array_1" /> -->
+
+  <node name="linemod2" pkg="object_recognition_core" type="detection" args="-c  /home/arc/ros_ws/src/linemod/conf/detection3.ros.ork" />
+  	<!-- <remap from="recognized_object_array" to="recognized_object_array_3" /> -->
+]
+</launch>

@@ -1,0 +1,13 @@
+pipeline1:
+  type: LinemodTrainer
+  module: 'object_recognition_linemod'
+  parameters:
+    renderer_n_points: 150
+    # The list of object_ids to analyze
+    # object_ids: 'all'
+    object_ids: ['51367d45306f680ad728ee02780021d6']
+    db:
+      type: 'CouchDB'
+      root: 'http://localhost:5984'
+      collection: 'object_recognition'
+    
