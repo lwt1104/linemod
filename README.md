@@ -20,18 +20,22 @@ Ork pipeline training and detecting usage guide
 Reference link: http://wg-perception.github.io/ork_tutorials/tutorial03/tutorial.html
 
 Environment setup:
-	roslaunch openni_launch openni.launch
-	
-	rosrun rqt_reconfigure rqt_reconfigure
-	
-	Select /camera/driver from the drop-down menu and enable the depth_registration checkbox. In RViz, change the PointCloud2 topic to /camera/depth_registered/points and set the Color Transformer to RGB8 to see both color and 3D point cloud of your scene. The detailed explanation can be found here: http://wiki.ros.org/openni2_launch.
+	start openni:
+		roslaunch openni_launch openni.launch
+	register color and depth:
+		rosrun rqt_reconfigure rqt_reconfigure
+		
+		Select /camera/driver from the drop-down menu and enable the depth_registration checkbox. In RViz, change the PointCloud2 topic to /camera/depth_registered/points and set the Color Transformer to RGB8 to see both color and 3D point cloud of your scene. The detailed explanation can be found here: http://wiki.ros.org/openni2_launch.
 
 Add object to database:
 	rosrun object_recognition_core object_add.py -n <object_name> -d <object description> --commit
 	Example:
 		rosrun object_recognition_core object_add.py -n "coke" -d "A universal can of coke" --commit
+
 Add mesh file for object created in the database:
 	rosrun object_recognition_core mesh_add.py <YOUR_OBJECT_ID> <path to ork_tutorials/data/coke.stl> --commit
+
+(Commnet: all the object and related entries can be viewed in the database http://localhost:5984/_utils/database.html?object_recognition/_all_docs)
 
 Train linemod template after mesh file has been uploaded to database
 	rosrun object_recognition_core training -c `rospack find object_recognition_linemod`/conf/training.ork
@@ -40,6 +44,8 @@ Train linemod template after mesh file has been uploaded to database
 Test linemod:
     roslaunch object_recognition_linemod linemod.launch
     (comment: linemod.launch located at ~/ros_ws/src/linemod/launch/ can be configured based on needs.
-     )
+     detection paramters can be specified in conf/detection.ork file and make sure linemod.launch load the correct version of detection.ork file)
 
-
+Detect an object if necessary:
+	rosrun object_recognition_core object_delete.py <OBJECT_ID> --commit
+	(comment: using this command can delete object in the database neatly)
