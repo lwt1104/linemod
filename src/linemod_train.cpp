@@ -52,9 +52,11 @@
 #include <object_recognition_renderer/renderer3d.h>
 #include <object_recognition_renderer/utils.h>
 
-#if LINEMOD_VIZ_IMG
+
+
+// #if LINEMOD_VIZ_IMG
   #include <opencv2/highgui/highgui.hpp>
-#endif
+// #endif
 
 using ecto::tendrils;
 using ecto::spore;
@@ -66,11 +68,11 @@ namespace ecto_linemod
     static void
     declare_params(tendrils& params)
     {
-      params.declare(&Trainer::param_n_points_, "renderer_n_points", "Renderer parameter: the number of points on the sphere.", 150);
-      params.declare(&Trainer::param_angle_step_, "renderer_angle_step", "Renderer parameter: the angle step sampling in degrees.", 10);
-      params.declare(&Trainer::param_radius_min_, "renderer_radius_min", "Renderer parameter: the minimum scale sampling.", 0.6);
-      params.declare(&Trainer::param_radius_max_, "renderer_radius_max", "Renderer parameter: the maximum scale sampling.", 1.1);
-      params.declare(&Trainer::param_radius_step_, "renderer_radius_step", "Renderer parameter: the step scale sampling.", 0.4);
+      params.declare(&Trainer::param_n_points_, "renderer_n_points", "Renderer parameter: the number of points on the sphere.", 75);
+      params.declare(&Trainer::param_angle_step_, "renderer_angle_step", "Renderer parameter: the angle step sampling in degrees.", 5);
+      params.declare(&Trainer::param_radius_min_, "renderer_radius_min", "Renderer parameter: the minimum scale sampling.", 0.8);  //  naked0.8  0.6  0.3
+      params.declare(&Trainer::param_radius_max_, "renderer_radius_max", "Renderer parameter: the maximum scale sampling.", 1.1);   // 1.1  1.1  0.5
+      params.declare(&Trainer::param_radius_step_, "renderer_radius_step", "Renderer parameter: the step scale sampling.", 0.15);    // 0.15  0.15  0.2
       params.declare(&Trainer::param_width_, "renderer_width", "Renderer parameter: the image width.", 640);
       params.declare(&Trainer::param_height_, "renderer_height", "Renderer parameter: the image height.", 480);
       params.declare(&Trainer::param_focal_length_x_, "renderer_focal_length_x", "Renderer parameter: the focal length x.", 525.0);
@@ -133,6 +135,8 @@ namespace ecto_linemod
     possible_names[1] = "mesh";
     for (size_t i = 0; i < possible_names.size() && mesh_path.empty(); ++i) {
       BOOST_FOREACH(const std::string& attachment_name, attachments_names) {
+
+        printf("%s\n\n\n", attachment_name.c_str());
         if (attachment_name.find(possible_names[i]) != 0)
           continue;
         // Create a temporary file
@@ -183,6 +187,12 @@ namespace ecto_linemod
     cv::Matx33d R;
     cv::Vec3d T;
     cv::Matx33f K;
+    
+    std::stringstream ss2;
+    ss2 << "Loading images " 
+          << renderer_iterator.n_templates();
+    std::cout << ss2.str();
+
     for (size_t i = 0; !renderer_iterator.isDone(); ++i, ++renderer_iterator)
     {
       std::stringstream status;
@@ -192,6 +202,10 @@ namespace ecto_linemod
 
       cv::Rect rect;
       renderer_iterator.render(image, depth, mask, rect);
+
+      // printf("image %d , %d\n", image.rows, image.cols);
+      // printf("depth %d , %d\n", depth.rows, depth.cols);
+
 
       R = renderer_iterator.R_obj();
       T = renderer_iterator.T();

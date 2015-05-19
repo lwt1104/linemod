@@ -42,7 +42,8 @@ pipeline1:
     px_match_min: 0.25 #0.5
     depth_frame_id: 'camera_depth_optical_frame' #CameraDepth_frame
     # The list of object_ids to analyze
-    object_ids: 'all'
+    # object_ids: 'all'
+    object_ids: ['51367d45306f680ad728ee02780021d6']
     #object_ids: ['ed149575c2a44c1c095c5bc1b80c3038']
     db:
       type: 'CouchDB'

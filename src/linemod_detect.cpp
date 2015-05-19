@@ -1,4 +1,4 @@
-/*
+  /*
  * Software License Agreement (BSD License)
  *
  *  Copyright (c) 2009, Willow Garage, Inc.
@@ -59,9 +59,9 @@ using object_recognition_core::db::ObjectId;
 using object_recognition_core::common::PoseResult;
 using object_recognition_core::db::ObjectDbPtr;
 
-#if LINEMOD_VIZ_IMG
+// #if LINEMOD_VIZ_IMG
   #include <opencv2/highgui/highgui.hpp>
-#endif
+// #endif
 
 #if LINEMOD_VIZ_PCD
   #include "ros/ros.h"
@@ -173,6 +173,9 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
       params.declare(&Detector::depth_frame_id_, "depth_frame_id", "The depth camera frame id.", "camera_depth_optical_frame");
       params.declare(&Detector::icp_dist_min_, "icp_dist_min", "", 0.06f);
       params.declare(&Detector::px_match_min_, "px_match_min", "", 0.25f);
+
+
+      params.declare(&Detector::depth_max_, "depth_max", "", 2000);
     }
 
     static void
@@ -281,10 +284,20 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
         sources.push_back(color);
       }
 
+      // printf("size40 %d \n", sources.size());
       cv::Mat depth = *depth_;
-      if (depth_->depth() == CV_32F)
+      cv::Mat depth2;
+      if (depth_->depth() == CV_32F) {
+        // cv::threshold(*depth_, depth2, 0, 5.0, cv::THRESH_TRUNC);
         depth_->convertTo(depth, CV_16UC1, 1000.0);
-
+      }
+      printf("%d \n", *depth_max_);
+      depth_->setTo( cv::Scalar(2000), *depth_ > *depth_max_);
+      // depth_->setTo( cv::Scalar(0), *depth_ < 1300);
+      printf("depth_type %d  channels %d \n", depth_->depth(), depth_->channels());
+      printf("value %d \n", depth_->at<uchar>(200, 200));
+        
+      // printf("size50 %d \n", sources.size());
       if (*use_depth_)
       {
         if (!(*use_rgb_))
@@ -295,6 +308,9 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
           sources.push_back(display);
         }
 
+        // std::count<<depth<<std::endl;
+        // cv::threshold(depth, depth2, 0, 5.0, 2);
+        // printf("Matrix: %d \n",  depth.channels() );
         sources.push_back(depth);
       }
 
@@ -472,6 +488,9 @@ struct Detector: public object_recognition_core::db::bases::ModelReaderBase {
   }
 
   /** LINE-MOD detector */
+    spore<int> depth_max_;
+
+
   cv::Ptr<cv::linemod::Detector> detector_;
     // Parameters
     spore<float> threshold_;
