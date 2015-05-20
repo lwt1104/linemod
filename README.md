@@ -15,7 +15,7 @@ Install linemod and ork_render
 If any problems appears, refer to discussion "Object recognition kitchen linemod installation and test" in BaseCamp for debugging.
 
 
-============================================================================
+====================================================================================
 Ork pipeline training and detecting usage guide
 Reference link: http://wg-perception.github.io/ork_tutorials/tutorial03/tutorial.html
 
@@ -44,8 +44,25 @@ Train linemod template after mesh file has been uploaded to database
 Test linemod:
     roslaunch object_recognition_linemod linemod.launch
     (comment: linemod.launch located at ~/ros_ws/src/linemod/launch/ can be configured based on needs.
-     detection paramters can be specified in conf/detection.ork file and make sure linemod.launch load the correct version of detection.ork file)
+     detection paramters can be specified in conf/detection.ros.ork file and make sure linemod.launch load the correct version of detection.ork file)
 
 Detect an object if necessary:
 	rosrun object_recognition_core object_delete.py <OBJECT_ID> --commit
 	(comment: using this command can delete object in the database neatly)
+
+==========================================================================================
+Tips about configure file: training.ork/detection.ros.ork
+ 
+These configure files can specifiy paramters for training and detection. e.g.
+object_ids: 'all'  means training/detecting all the object in the databse;
+object_ids: ['51367d45306f680ad728ee02780021d6'] means training/detecting only object id '51367d45306f680ad728ee02780021d6' in the databse.
+
+You can creaet variable in cpp file and assign value to it through configure file so that you don't need to recompile if you want to change's the varible's value. e.g. You can declare a varialbe in the cpp file:
+	params.declare(&Detector::depth_max_, "depth_max", "", 2000); // 2000 is the default value if no value is given in the configure file
+Then in the configure file, you can assign a value to depth_max_:
+	depth_max: 5000
+
+
+=================================================================================================
+The root node of the hierachy of ORK pipeline tutorial is:
+http://wg-perception.github.io/object_recognition_core/
